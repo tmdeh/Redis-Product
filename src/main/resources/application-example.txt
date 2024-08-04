@@ -1,0 +1,29 @@
+spring:
+  data:
+    redis:
+      host: 127.0.0.1
+      port: 6379
+      connect-timeout: 30s
+      timeout: 10s
+  datasource:
+    url: jdbc:mysql://localhost:3306/redis_product
+    username: root
+    password: 1234
+
+
+  jpa:
+    hibernate:
+      ddl-auto: update
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.MySQLDialect
+        show_sql: true
+        format_sql: true
+
+secret:
+  access:
+    expire: 600000
+    key: OYgwINhVBfR6sa26fpW7fU8F16XhqM0xpKwJY0Lm000
+  refresh:
+    expire: 86400000
+    key: RPdjA9SNZiscscU8kS8J1xQWRd7ivq1G4X8Gkgog000
