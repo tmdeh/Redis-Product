@@ -5,7 +5,6 @@ import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import lombok.Builder;
 import lombok.Getter;
-import lombok.ToString;
 import org.springframework.http.HttpStatus;
 
 @Getter
@@ -13,13 +12,13 @@ import org.springframework.http.HttpStatus;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class ApiResponse <T> {
 
-    private final HttpStatus status;
+    private final Integer status;
     private final String message;
     private final T data;
 
     public static <T> ApiResponse<T> of(HttpStatus status, String message, T data) {
         return ApiResponse.<T>builder()
-                .status(status)
+                .status(status.value())
                 .message(message)
                 .data(data)
                 .build();
@@ -27,14 +26,14 @@ public class ApiResponse <T> {
 
     public static <T> ApiResponse<T> success() {
         return ApiResponse.<T>builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .build();
     }
 
     public static <T> ApiResponse<T> success(T data) {
         return ApiResponse.<T>builder()
-                .status(HttpStatus.OK)
+                .status(HttpStatus.OK.value())
                 .message(HttpStatus.OK.getReasonPhrase())
                 .data(data)
                 .build();
@@ -42,7 +41,7 @@ public class ApiResponse <T> {
 
     public static <T> ApiResponse<T> error(HttpStatus status, String message) {
         return ApiResponse.<T>builder()
-                .status(status)
+                .status(status.value())
                 .message(message)
                 .build();
     }
@@ -50,7 +49,7 @@ public class ApiResponse <T> {
     public static <T> ApiResponse<T> error(CustomException exception) {
         ErrorCode errorCode = exception.getErrorCode();
         return ApiResponse.<T>builder()
-                .status(errorCode.getCode())
+                .status(errorCode.getCode().value())
                 .message(errorCode.getMessage())
                 .build();
     }
