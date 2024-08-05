@@ -46,7 +46,8 @@ class UserControllerTest {
     @Test
     @Rollback
     void 회원가입_성공() throws Exception {
-        SignUpRequest request = new SignUpRequest("newtest@test.com", "test-password");
+        String email = "newtest@test.com";
+        SignUpRequest request = new SignUpRequest(email, "test-password");
 
         // Act & Assert
         mockMvc.perform(post("/api/users/signup")
@@ -81,4 +82,15 @@ class UserControllerTest {
                 .andExpect(jsonPath("$.data.refreshToken").isString());
 
     }
+
+    @Test
+    void 로그인_실패() throws Exception {
+            LoginRequest loginRequest = new LoginRequest(email, "wrong-password");
+
+            mockMvc.perform(post("/api/users/login")
+                            .contentType(MediaType.APPLICATION_JSON)
+                            .content(objectMapper.writeValueAsString(loginRequest)))
+                    .andExpect(status().isUnauthorized());
+    }
+
 }

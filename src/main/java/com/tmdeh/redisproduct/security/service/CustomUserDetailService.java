@@ -4,7 +4,7 @@ import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import com.tmdeh.redisproduct.model.entity.User;
 import com.tmdeh.redisproduct.repository.UserRepository;
-import com.tmdeh.redisproduct.security.model.CustomUserDetails;
+import com.tmdeh.redisproduct.security.model.CustomUserDetailsImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -21,6 +21,6 @@ public class CustomUserDetailService implements UserDetailsService {
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
         User user = userRepository.findByEmail(email)
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOTFOUND));
-        return new CustomUserDetails(user);
+        return new CustomUserDetailsImpl(user);
     }
 }

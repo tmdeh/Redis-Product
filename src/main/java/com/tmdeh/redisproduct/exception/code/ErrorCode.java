@@ -15,6 +15,7 @@ public enum ErrorCode {
     ALREADY_EXIST_EMAIL(HttpStatus.BAD_REQUEST, "이미 사용중인 이메일입니다."),
 
 
+    LOGIN_FAILED(HttpStatus.UNAUTHORIZED, "이메일과 비밀번호가 일치하지 않습니다."),
     ;
     private final HttpStatus code;
     private final String message;

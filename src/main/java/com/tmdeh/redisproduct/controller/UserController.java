@@ -1,7 +1,9 @@
 package com.tmdeh.redisproduct.controller;
 
+import com.tmdeh.redisproduct.model.dto.reqeust.LoginRequest;
 import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
+import com.tmdeh.redisproduct.model.dto.response.LoginResponse;
 import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
 import com.tmdeh.redisproduct.service.UsersService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +23,12 @@ public class UserController {
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignUpResponse>> signup(@RequestBody SignUpRequest request) {
         ApiResponse<SignUpResponse> apiResponse = usersService.signUp(request);
+        return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<ApiResponse<LoginResponse>> login(@RequestBody LoginRequest request) {
+        ApiResponse<LoginResponse> apiResponse = usersService.login(request);
         return ResponseEntity.status(apiResponse.getStatus()).body(apiResponse);
     }
 

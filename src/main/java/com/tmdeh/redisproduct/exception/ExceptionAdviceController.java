@@ -1,9 +1,11 @@
 package com.tmdeh.redisproduct.exception;
 
+import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -24,4 +26,5 @@ public class ExceptionAdviceController {
     public ResponseEntity<ApiResponse<?>> exceptionHandler(CustomException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(ApiResponse.error(ex));
     }
+
 }
