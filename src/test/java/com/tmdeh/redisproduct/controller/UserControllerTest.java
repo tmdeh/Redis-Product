@@ -2,7 +2,9 @@ package com.tmdeh.redisproduct.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
+import com.tmdeh.redisproduct.model.dto.reqeust.LoginRequest;
 import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -28,12 +30,23 @@ class UserControllerTest {
     private MockMvc mockMvc;
 
     private final String email = "test@test.com";
+    private final String password = "test";
+
+    @BeforeEach
+    void setUp() throws Exception {
+        // Register a user before each test
+        SignUpRequest signUpRequest = new SignUpRequest(email, password);
+        mockMvc.perform(post("/api/users/signup")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(signUpRequest)))
+                .andExpect(status().isCreated());
+    }
+
 
     @Test
     @Rollback
-    void 회원가입() throws Exception {
-        // Arrange
-        SignUpRequest request = new SignUpRequest(email, "test-password");
+    void 회원가입_성공() throws Exception {
+        SignUpRequest request = new SignUpRequest("newtest@test.com", "test-password");
 
         // Act & Assert
         mockMvc.perform(post("/api/users/signup")
@@ -46,24 +59,26 @@ class UserControllerTest {
 
     @Test
     void 회원가입_실패_동일한_이메일이_있는_경우() throws Exception {
-        // Arrange
-        String password = "password";
-
-        // Register the first user
-        SignUpRequest initialRequest = new SignUpRequest(email, password);
-        mockMvc.perform(post("/api/users/signup")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(initialRequest)))
-                .andExpect(status().isCreated());
-
-        // Attempt to register a new user with the same email
         SignUpRequest duplicateRequest = new SignUpRequest(email, password);
 
-        // Act & Assert
         mockMvc.perform(post("/api/users/signup")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(duplicateRequest)))
                 .andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.message").value(ErrorCode.ALREADY_EXIST_EMAIL.getMessage()));
+    }
+
+
+    @Test
+    void 로그인_성공() throws Exception {
+        LoginRequest loginRequest = new LoginRequest(email, password);
+
+        mockMvc.perform(post("/api/users/login")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(loginRequest)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.data.accessToken").isString())
+                .andExpect(jsonPath("$.data.refreshToken").isString());
+
     }
 }
