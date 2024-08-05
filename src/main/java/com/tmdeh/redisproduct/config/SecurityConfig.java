@@ -23,9 +23,12 @@ public class SecurityConfig {
                 .sessionManagement(sessionManagementConfigurer -> sessionManagementConfigurer.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
         http.authorizeHttpRequests(request ->
-                request.requestMatchers("/login", "/register").permitAll()
-                        .anyRequest().permitAll()
+                request.requestMatchers("/api/users/signup", "api/users/login").permitAll()
+                        .anyRequest().authenticated()
         );
+
+
+
 
         return http.build();
     }

@@ -26,6 +26,9 @@ public class User extends TimeStamp{
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
     private List<Cart> carts;
 
-
+    public User(String email, String password) {
+        this.email = email;
+        this.password = password;
+    }
 
 }
