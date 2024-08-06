@@ -5,6 +5,7 @@ import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 public class ExceptionAdviceController {
 
     // 예측하지 못한 에외
-    @ExceptionHandler(value = Exception.class)
+    @ExceptionHandler(Exception.class)
     public ResponseEntity<ApiResponse<?>> defaultErrorHandler(Exception ex) {
         log.error(ex.getMessage(), ex);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
@@ -22,9 +23,8 @@ public class ExceptionAdviceController {
     }
 
     // 의도된 에외
-    @ExceptionHandler(value = CustomException.class)
+    @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse<?>> exceptionHandler(CustomException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(ApiResponse.error(ex));
     }
-
 }

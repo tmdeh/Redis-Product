@@ -46,27 +46,28 @@ public class UsersService {
 
     @Transactional
     public ApiResponse<LoginResponse> login(LoginRequest request) {
-        Authentication authentication;
-        try {
-            authentication = authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword())
-            );
-        } catch (AuthenticationException e) {
-            // 인증 실패 시 예외 처리
-            throw new CustomException(ErrorCode.LOGIN_FAILED);
-        }
-
-        // Principal 객체가 CustomUserDetails인지 확인
-        if (!(authentication.getPrincipal() instanceof CustomUserDetails)) {
-            throw new CustomException(ErrorCode.LOGIN_FAILED);
-        }
-
-        CustomUserDetails userDetails = (CustomUserDetails) authentication.getPrincipal();
+        CustomUserDetails userDetails = authenticate(request.getEmail(), request.getPassword());
 
         String refreshToken = jwtTokenProvider.generateRefreshToken();
         String accessToken = jwtTokenProvider.generateAccessToken(userDetails.getUser().getId());
 
         return ApiResponse.success(new LoginResponse(accessToken, refreshToken));
+    }
+
+    private CustomUserDetails authenticate(String email, String password) {
+        try {
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(email, password)
+            );
+
+            if (!(authentication.getPrincipal() instanceof CustomUserDetails userDetails)) {
+                throw new CustomException(ErrorCode.LOGIN_FAILED);
+            }
+
+            return userDetails;
+        } catch (AuthenticationException e) {
+            throw new CustomException(ErrorCode.LOGIN_FAILED);
+        }
     }
 
 }
