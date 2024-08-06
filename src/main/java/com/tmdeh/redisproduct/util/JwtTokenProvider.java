@@ -8,6 +8,7 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import jakarta.annotation.PostConstruct;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -29,10 +30,21 @@ public class JwtTokenProvider {
     private Long refreshExpire;
 
     @Value("${secret.access.key}")
-    private String accessKey;
+    private String accessString;
 
     @Value("${secret.refresh.key}")
-    private String refreshKey;
+    private String refreshString;
+
+    private SecretKey accessKey;
+    private SecretKey refreshKey;
+
+
+    @PostConstruct
+    public void init() {
+        accessKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(accessString));
+        refreshKey = Keys.hmacShaKeyFor(Decoders.BASE64.decode(refreshString));
+    }
+
 
     private final CustomUserDetailService userDetailsService;
 
@@ -42,7 +54,7 @@ public class JwtTokenProvider {
                 .setIssuer("Redis Product")
                 .setIssuedAt(new Date())
                 .setExpiration(new Date(System.currentTimeMillis() + accessExpire))
-                .signWith(getAccessSecretKey())
+                .signWith(accessKey)
                 .compact();
     }
 
@@ -51,7 +63,7 @@ public class JwtTokenProvider {
                 .setIssuedAt(new Date())
                 .setIssuer("Redis Product")
                 .setExpiration(new Date(System.currentTimeMillis() + refreshExpire))
-                .signWith(getRefreshSecretKey())
+                .signWith(refreshKey)
                 .compact();
     }
 
@@ -59,7 +71,7 @@ public class JwtTokenProvider {
     public void validateAccessToken(String accessToken) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(getAccessSecretKey())
+                    .setSigningKey(accessKey)
                     .build()
                     .parseClaimsJws(accessToken);
         } catch (ExpiredJwtException e) {
@@ -77,7 +89,7 @@ public class JwtTokenProvider {
     public void validateRefreshToken(String refreshToken) {
         try {
             Jwts.parserBuilder()
-                    .setSigningKey(getRefreshSecretKey())
+                    .setSigningKey(refreshKey)
                     .build()
                     .parseClaimsJws(refreshToken);
         } catch (ExpiredJwtException e) {
@@ -94,7 +106,7 @@ public class JwtTokenProvider {
 
     public Long getUserId(String accessToken) {
         return Jwts.parserBuilder()
-                .setSigningKey(getAccessSecretKey())
+                .setSigningKey(accessKey)
                 .build().parseClaimsJws(accessToken)
                 .getBody()
                 .get("userId", Long.class);
@@ -103,17 +115,6 @@ public class JwtTokenProvider {
     public Authentication getAuthentication(String token) {
         UserDetails userDetails = userDetailsService.loadUserById(getUserId(token));
         return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
-    }
-
-
-    private SecretKey getAccessSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(accessKey);
-        return Keys.hmacShaKeyFor(keyBytes);
-    }
-
-    private SecretKey getRefreshSecretKey() {
-        byte[] keyBytes = Decoders.BASE64.decode(refreshKey);
-        return Keys.hmacShaKeyFor(keyBytes);
     }
 
 }
