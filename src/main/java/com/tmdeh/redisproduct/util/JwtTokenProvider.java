@@ -2,18 +2,24 @@ package com.tmdeh.redisproduct.util;
 
 import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
+import com.tmdeh.redisproduct.security.service.CustomUserDetailService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
 import javax.crypto.SecretKey;
 import java.util.Date;
 
 @Component
+@RequiredArgsConstructor
 public class JwtTokenProvider {
 
     @Value("${secret.access.expire}")
@@ -28,6 +34,7 @@ public class JwtTokenProvider {
     @Value("${secret.refresh.key}")
     private String refreshKey;
 
+    private final CustomUserDetailService userDetailsService;
 
     public String generateAccessToken(Long id) {
         return Jwts.builder()
@@ -91,6 +98,11 @@ public class JwtTokenProvider {
                 .build().parseClaimsJws(accessToken)
                 .getBody()
                 .get("userId", Long.class);
+    }
+
+    public Authentication getAuthentication(String token) {
+        UserDetails userDetails = userDetailsService.loadUserById(getUserId(token));
+        return new UsernamePasswordAuthenticationToken(userDetails, "", userDetails.getAuthorities());
     }
 
 

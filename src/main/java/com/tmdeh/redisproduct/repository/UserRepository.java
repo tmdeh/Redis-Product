@@ -13,4 +13,8 @@ public interface UserRepository extends JpaRepository<User, Long> {
 
     boolean existsByEmail(@NonNull String email);
 
+    default User getById(@NonNull Long id) {
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOTFOUND));
+    }
+
 }

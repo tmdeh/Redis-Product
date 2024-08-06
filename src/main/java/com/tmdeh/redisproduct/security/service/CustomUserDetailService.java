@@ -23,4 +23,10 @@ public class CustomUserDetailService implements UserDetailsService {
             .orElseThrow(() -> new CustomException(ErrorCode.USER_NOTFOUND));
         return new CustomUserDetailsImpl(user);
     }
+
+    public UserDetails loadUserById(Long id) {
+        User user = userRepository.getById(id);
+        return new CustomUserDetailsImpl(user);
+    }
+
 }
