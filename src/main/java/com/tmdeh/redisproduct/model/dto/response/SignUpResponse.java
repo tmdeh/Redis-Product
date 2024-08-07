@@ -11,7 +11,9 @@ import lombok.ToString;
 public class SignUpResponse {
     private Long id;
     private String email;
-
+    
+    
+    // TODO: 엔티티로 옮기기
     public static SignUpResponse from(User user) {
         return new SignUpResponse(user.getId(), user.getEmail());
     }
