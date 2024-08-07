@@ -6,6 +6,7 @@ import com.tmdeh.redisproduct.model.dto.response.CreateProductResponse;
 import com.tmdeh.redisproduct.model.entity.Product;
 import com.tmdeh.redisproduct.repository.ProductRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -18,7 +19,7 @@ public class ProductService {
     @Transactional
     public ApiResponse<CreateProductResponse> createProduct(CreateProductRequest request) {
         Product product = productRepository.save(Product.of(request));
-        return ApiResponse.success(Product.from(product));
+        return ApiResponse.of(HttpStatus.CREATED, HttpStatus.CREATED.name(), Product.from(product));
     }
 
 }
