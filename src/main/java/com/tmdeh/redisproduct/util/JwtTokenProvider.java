@@ -9,6 +9,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
 import jakarta.annotation.PostConstruct;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -102,6 +103,15 @@ public class JwtTokenProvider {
             // 잘못된 토큰인 경우
             throw new CustomException(ErrorCode.INVALID_TOKEN);
         }
+    }
+
+
+    public String extractJwtFromRequest(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (bearerToken == null || !bearerToken.startsWith("Bearer ")) {
+            throw new CustomException(ErrorCode.TOKEN_NOTFOUND);
+        }
+        return bearerToken.substring(7); // "Bearer " 이후의 실제 토큰 부분을 추출합니다.
     }
 
     public Long getUserId(String accessToken) {

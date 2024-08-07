@@ -1,5 +1,6 @@
 package com.tmdeh.redisproduct.security.fillter;
 
+import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
@@ -14,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -27,23 +29,23 @@ public class JwtAuthenticationFilterTest {
     @Autowired
     private JwtTokenProvider jwtTokenProvider;
 
-    private final String endpoint = "/api/users/profile";
     @Autowired
     private UsersService usersService;
 
-    private Long userId;
+    private final String endpoint = "/api/users/profile";
+
+    private String token;
+
+    private String expiredToken = "eyJhbGciOiJIUzI1NiJ9.eyJ1c2VySWQiOjM3LCJpc3MiOiJSZWRpcyBQcm9kdWN0IiwiaWF0IjoxNzIyOTMwNDQ2LCJleHAiOjE3MjI5MzEwNDZ9.nHIEvHXf4Dne_6ioQA2D0P_QfIogrlu4wusxtOlMKf0";
 
     @BeforeEach
     public void setUp() throws Exception {
         ApiResponse<SignUpResponse> response = usersService.signUp(new SignUpRequest("test@test.com", "test"));
-        userId = response.getData().getId();
+        token = jwtTokenProvider.generateAccessToken(response.getData().getId());
     }
 
     @Test
     void 유효한토큰이_있는경우_성공적으로_인증한다() throws Exception {
-
-
-        String token = jwtTokenProvider.generateAccessToken(userId);
         // when, then
         mockMvc.perform(get(endpoint)
                         .header("Authorization", "Bearer " + token))
@@ -52,38 +54,24 @@ public class JwtAuthenticationFilterTest {
 
     @Test
     void 유효하지않은토큰이_있는경우_401에러를_반환한다() throws Exception {
-
-        String token = "";
-
-
-//        when(jwtTokenProvider.resolveToken(any(HttpServletRequest.class))).thenReturn(token);
-//        when(jwtTokenProvider.validateToken(token)).thenReturn(false);
-
-        // when, then
         mockMvc.perform(get(endpoint)
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isUnauthorized());
+                        .header("Authorization", "Bearer " + token + "wrong value"))
+                .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.message").value(ErrorCode.INVALID_TOKEN.getMessage()));
     }
 
     @Test
     void 토큰이_없는경우_401에러를_반환한다() throws Exception {
-
-        // when, then
         mockMvc.perform(get(endpoint))
-                .andExpect(status().isUnauthorized());
+                .andExpect(status().isUnauthorized())
+            .andExpect(jsonPath("$.message").value(ErrorCode.TOKEN_NOTFOUND.getMessage()));
     }
 
     @Test
-    void 만료된토큰이_있는경우_401에러를_반환한다() throws Exception {
-
-        String token = "";
-
-//        when(jwtTokenProvider.resolveToken(any(HttpServletRequest.class))).thenReturn(token);
-//        when(jwtTokenProvider.validateToken(token)).thenReturn(false);
-
-        // when, then
-        mockMvc.perform(get(endpoint)
-                        .header("Authorization", "Bearer " + token))
-                .andExpect(status().isUnauthorized());
-    }
+        void 만료된토큰이_있는경우_401에러를_반환한다() throws Exception {
+            mockMvc.perform(get(endpoint)
+                            .header("Authorization", "Bearer " + expiredToken))
+                    .andExpect(status().isUnauthorized())
+                .andExpect(jsonPath("$.message").value(ErrorCode.EXPIRED_TOKEN.getMessage()));
+        }
 }
