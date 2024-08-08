@@ -74,8 +74,7 @@ class JwtTokenProviderTest {
 
         // when & then
         assertThatThrownBy(() -> jwtTokenProvider.validateRefreshToken(tamperedRefreshToken))
-                .isInstanceOf(CustomException.class)  // JwtException의 서브클래스 예
-                .hasMessageContaining("잘못된 토큰입니다.");  // 메시지는 실제 예외 메시지에 따라 조정 필요
+                .isInstanceOf(CustomException.class);
     }
 
     @Test

@@ -1,14 +1,12 @@
 package com.tmdeh.redisproduct.exception;
 
-import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.AuthenticationException;
-import org.springframework.web.HttpRequestMethodNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.servlet.NoHandlerFoundException;
 
 @Slf4j
 @ControllerAdvice
@@ -26,5 +24,11 @@ public class ExceptionAdviceController {
     @ExceptionHandler(CustomException.class)
     public ResponseEntity<ApiResponse<?>> exceptionHandler(CustomException ex) {
         return ResponseEntity.status(ex.getStatusCode()).body(ApiResponse.error(ex));
+    }
+    
+    // 404 핸들링
+    @ExceptionHandler(NoHandlerFoundException.class)
+    public ResponseEntity<ApiResponse<?>> handleNotFound(NoHandlerFoundException ex) {
+        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(ApiResponse.error(HttpStatus.NOT_FOUND, "Not Found"));
     }
 }

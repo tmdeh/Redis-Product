@@ -92,7 +92,10 @@ class ProductControllerTest {
             .contentType(MediaType.APPLICATION_JSON)
             .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
-            .andExpect(jsonPath("$.data.id").value(productId));
+            .andExpect(jsonPath("$.data.id").value(productId))
+            .andExpect(jsonPath("$.data.name").value(products.get(0).getName()))
+            .andExpect(jsonPath("$.data.price").value(products.get(0).getPrice()))
+            .andExpect(jsonPath("$.data.description").value(products.get(0).getDescription()));
 
     }
 

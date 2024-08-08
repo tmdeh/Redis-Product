@@ -36,7 +36,6 @@ public class ProductController {
     @GetMapping("/{productId}")
     public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable Long productId) {
         ApiResponse<ProductResponse> response = productService.findProductById(productId);
-        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 
