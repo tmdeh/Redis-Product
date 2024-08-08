@@ -19,7 +19,7 @@ public class Cart extends TimeStamp{
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    private User user;
+    private Member member;
 
     @ManyToOne(fetch = FetchType.LAZY)
     private Product product;

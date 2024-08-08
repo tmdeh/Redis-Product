@@ -8,6 +8,7 @@ import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -29,6 +30,13 @@ public class ProductController {
     @GetMapping
     public ResponseEntity<ApiResponse<List<ProductResponse>>> getProducts() {
         ApiResponse<List<ProductResponse>> response = productService.findAllProduct();
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/{productId}")
+    public ResponseEntity<ApiResponse<ProductResponse>> getProduct(@PathVariable Long productId) {
+        ApiResponse<ProductResponse> response = productService.findProductById(productId);
+        System.out.println(response);
         return ResponseEntity.ok(response);
     }
 

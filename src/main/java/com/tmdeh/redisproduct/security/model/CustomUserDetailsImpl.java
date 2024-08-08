@@ -1,11 +1,10 @@
 package com.tmdeh.redisproduct.security.model;
 
-import com.tmdeh.redisproduct.model.entity.User;
+import com.tmdeh.redisproduct.model.entity.Member;
 import com.tmdeh.redisproduct.security.service.CustomUserDetails;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
 import java.util.List;
@@ -14,7 +13,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class CustomUserDetailsImpl implements CustomUserDetails {
 
-    private final User user;
+    private final Member user;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {

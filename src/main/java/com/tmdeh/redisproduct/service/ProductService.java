@@ -31,4 +31,10 @@ public class ProductService {
         return ApiResponse.success(productList);
     }
 
+    @Transactional(readOnly = true)
+    public ApiResponse<ProductResponse> findProductById(Long id) {
+        Product product = productRepository.getById(id);
+        return ApiResponse.success(Product.from(product));
+    }
+
 }

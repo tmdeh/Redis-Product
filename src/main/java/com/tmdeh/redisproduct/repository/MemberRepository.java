@@ -2,19 +2,19 @@ package com.tmdeh.redisproduct.repository;
 
 import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
-import com.tmdeh.redisproduct.model.entity.User;
+import com.tmdeh.redisproduct.model.entity.Member;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.lang.NonNull;
 
-public interface UserRepository extends JpaRepository<User, Long> {
+public interface MemberRepository extends JpaRepository<Member, Long> {
 
-    Optional<User> findByEmail(String email);
+    Optional<Member> findByEmail(String email);
 
     boolean existsByEmail(@NonNull String email);
 
-    default User getById(@NonNull Long id) {
-        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.USER_NOTFOUND));
+    default Member getById(@NonNull Long id) {
+        return findById(id).orElseThrow(() -> new CustomException(ErrorCode.MEMBER_NOTFOUND));
     }
 
 }

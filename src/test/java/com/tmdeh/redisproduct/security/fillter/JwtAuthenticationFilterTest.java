@@ -4,7 +4,7 @@ import com.tmdeh.redisproduct.exception.code.ErrorCode;
 import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
-import com.tmdeh.redisproduct.service.UsersService;
+import com.tmdeh.redisproduct.service.MemberService;
 import com.tmdeh.redisproduct.util.JwtTokenProvider;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -32,7 +32,7 @@ public class JwtAuthenticationFilterTest {
     private JwtTokenProvider jwtTokenProvider;
 
     @Autowired
-    private UsersService usersService;
+    private MemberService usersService;
 
     private final String endpoint = "/api/users/profile";
 

@@ -46,7 +46,7 @@ class ProductControllerTest {
     private List<Product> products;
 
     @BeforeEach
-    void setUp() throws Exception {
+    void setUp() {
         token = jwtTokenProvider.generateAccessToken(1L);
 
         products = new ArrayList<>();
@@ -82,4 +82,29 @@ class ProductControllerTest {
             .andExpect(jsonPath("$.data[0].price").value(products.get(0).getPrice()))
             .andExpect(jsonPath("$.data[0].description").value(products.get(0).getDescription()));
     }
+
+
+    @Test
+    void 상품_상세_조회_성공() throws Exception {
+        long productId = 1L;
+
+        mockMvc.perform(get("/api/products/{productId}", productId)
+            .contentType(MediaType.APPLICATION_JSON)
+            .header("Authorization", "Bearer " + token))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.data.id").value(productId));
+
+    }
+
+    @Test
+    void 상품_상세_조회_실패_해당_제품이_없는_경우() throws Exception {
+
+        long productId = Long.MAX_VALUE;
+
+        mockMvc.perform(get("/api/products/{productId}", productId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
+            .andExpect(status().isNotFound());
+    }
+
 }

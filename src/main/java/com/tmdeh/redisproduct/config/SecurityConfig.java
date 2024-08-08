@@ -2,7 +2,7 @@ package com.tmdeh.redisproduct.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tmdeh.redisproduct.security.fillter.JwtAuthenticationFilter;
-import com.tmdeh.redisproduct.security.service.CustomUserDetailService;
+import com.tmdeh.redisproduct.security.service.CustomMemberDetailService;
 import com.tmdeh.redisproduct.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
@@ -46,7 +46,7 @@ public class SecurityConfig {
     }
 
     @Bean
-    public AuthenticationManager authenticationManager(HttpSecurity http, CustomUserDetailService customUserDetailService, PasswordEncoder passwordEncoder) throws Exception {
+    public AuthenticationManager authenticationManager(HttpSecurity http, CustomMemberDetailService customUserDetailService, PasswordEncoder passwordEncoder) throws Exception {
         AuthenticationManagerBuilder authManagerBuilder =  http.getSharedObject(AuthenticationManagerBuilder.class);
         authManagerBuilder.userDetailsService(customUserDetailService)
                 .passwordEncoder(passwordEncoder);

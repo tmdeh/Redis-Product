@@ -7,8 +7,8 @@ import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import com.tmdeh.redisproduct.model.dto.response.LoginResponse;
 import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
-import com.tmdeh.redisproduct.model.entity.User;
-import com.tmdeh.redisproduct.repository.UserRepository;
+import com.tmdeh.redisproduct.model.entity.Member;
+import com.tmdeh.redisproduct.repository.MemberRepository;
 import com.tmdeh.redisproduct.security.service.CustomUserDetails;
 import com.tmdeh.redisproduct.util.JwtTokenProvider;
 import lombok.RequiredArgsConstructor;
@@ -23,9 +23,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
-public class UsersService {
+public class MemberService {
 
-    private final UserRepository userRepository;
+    private final MemberRepository userRepository;
     private final PasswordEncoder passwordEncoder;
 
     private final AuthenticationManager authenticationManager;
@@ -38,10 +38,10 @@ public class UsersService {
             throw new CustomException(ErrorCode.ALREADY_EXIST_EMAIL);
         }
 
-        User user = new User(request.getEmail(), passwordEncoder.encode(request.getPassword()));
+        Member user = new Member(request.getEmail(), passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
 
-        return ApiResponse.of(HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase(), SignUpResponse.from(user));
+        return ApiResponse.of(HttpStatus.CREATED, HttpStatus.CREATED.getReasonPhrase(), Member.from(user));
     }
 
     @Transactional

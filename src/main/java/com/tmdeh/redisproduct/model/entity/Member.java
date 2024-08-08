@@ -1,5 +1,6 @@
 package com.tmdeh.redisproduct.model.entity;
 
+import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
@@ -13,7 +14,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class User extends TimeStamp{
+public class Member extends TimeStamp{
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -23,12 +24,17 @@ public class User extends TimeStamp{
 
     private String password;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy = "user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "member")
     private List<Cart> carts;
 
-    public User(String email, String password) {
+    public Member(String email, String password) {
         this.email = email;
         this.password = password;
+    }
+
+
+    public static SignUpResponse from(Member user) {
+        return new SignUpResponse(user.getId(), user.getEmail());
     }
 
 }

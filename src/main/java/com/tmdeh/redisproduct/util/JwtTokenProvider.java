@@ -2,7 +2,7 @@ package com.tmdeh.redisproduct.util;
 
 import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
-import com.tmdeh.redisproduct.security.service.CustomUserDetailService;
+import com.tmdeh.redisproduct.security.service.CustomMemberDetailService;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.UnsupportedJwtException;
@@ -47,7 +47,7 @@ public class JwtTokenProvider {
     }
 
 
-    private final CustomUserDetailService userDetailsService;
+    private final CustomMemberDetailService userDetailsService;
 
     public String generateAccessToken(Long id) {
         return Jwts.builder()

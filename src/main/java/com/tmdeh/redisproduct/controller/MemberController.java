@@ -5,7 +5,7 @@ import com.tmdeh.redisproduct.model.dto.reqeust.SignUpRequest;
 import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import com.tmdeh.redisproduct.model.dto.response.LoginResponse;
 import com.tmdeh.redisproduct.model.dto.response.SignUpResponse;
-import com.tmdeh.redisproduct.service.UsersService;
+import com.tmdeh.redisproduct.service.MemberService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/api/users")
 @RequiredArgsConstructor
-public class UserController {
+public class MemberController {
 
-    private final UsersService usersService;
+    private final MemberService usersService;
 
     @PostMapping("/signup")
     public ResponseEntity<ApiResponse<SignUpResponse>> signup(@RequestBody SignUpRequest request) {
