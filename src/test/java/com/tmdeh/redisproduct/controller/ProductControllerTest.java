@@ -1,5 +1,7 @@
 package com.tmdeh.redisproduct.controller;
 
+
+
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tmdeh.redisproduct.config.TestSecurityConfig;
 import com.tmdeh.redisproduct.model.dto.reqeust.CreateProductRequest;
@@ -11,13 +13,18 @@ import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
+
+import static org.assertj.core.api.Assertions.*;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
@@ -44,6 +51,9 @@ class ProductControllerTest {
     private ProductRepository productRepository;
 
     private List<Product> products;
+    @Qualifier("redisTemplate")
+    @Autowired
+    private RedisTemplate redisTemplate;
 
     @BeforeEach
     void setUp() {
@@ -86,17 +96,26 @@ class ProductControllerTest {
 
     @Test
     void 상품_상세_조회_성공() throws Exception {
-        long productId = 1L;
+        long productId = products.get(0).getId();
+        String cacheKey = "product:" + productId;
 
-        mockMvc.perform(get("/api/products/{productId}", productId)
-            .contentType(MediaType.APPLICATION_JSON)
-            .header("Authorization", "Bearer " + token))
+        ResultActions resultActions = mockMvc.perform(get("/api/products/{productId}", productId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
             .andExpect(jsonPath("$.data.id").value(productId))
             .andExpect(jsonPath("$.data.name").value(products.get(0).getName()))
             .andExpect(jsonPath("$.data.price").value(products.get(0).getPrice()))
             .andExpect(jsonPath("$.data.description").value(products.get(0).getDescription()));
 
+
+        // redis에 저장되어 있는가
+        Product cachedProduct = (Product) redisTemplate.opsForValue().get(cacheKey);
+        assertThat(cachedProduct).isNotNull();
+        assertThat(cachedProduct.getId()).isEqualTo(productId);
+        assertThat(cachedProduct.getName()).isEqualTo(products.get(0).getName());
+        assertThat(cachedProduct.getPrice()).isEqualTo(products.get(0).getPrice());
+        assertThat(cachedProduct.getDescription()).isEqualTo(products.get(0).getDescription());
     }
 
     @Test
