@@ -1,7 +1,7 @@
 package com.tmdeh.redisproduct.model.entity;
 
 import com.tmdeh.redisproduct.model.dto.reqeust.CreateProductRequest;
-import com.tmdeh.redisproduct.model.dto.response.CreateProductResponse;
+import com.tmdeh.redisproduct.model.dto.response.ProductResponse;
 import jakarta.persistence.*;
 import lombok.Builder;
 import lombok.Getter;
@@ -46,8 +46,8 @@ public class Product extends TimeStamp {
     }
 
 
-    public static CreateProductResponse from(Product product) {
-        return CreateProductResponse.builder()
+    public static ProductResponse from(Product product) {
+        return ProductResponse.builder()
                 .id(product.getId())
                 .name(product.getName())
                 .description(product.getDescription())
