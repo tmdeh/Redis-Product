@@ -7,6 +7,7 @@ import com.tmdeh.redisproduct.config.TestSecurityConfig;
 import com.tmdeh.redisproduct.model.dto.reqeust.CreateProductRequest;
 import com.tmdeh.redisproduct.model.entity.Product;
 import com.tmdeh.redisproduct.repository.ProductRepository;
+import com.tmdeh.redisproduct.service.ProductService;
 import com.tmdeh.redisproduct.util.JwtTokenProvider;
 import java.util.ArrayList;
 import java.util.List;
@@ -17,15 +18,14 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.Import;
+import org.springframework.data.redis.cache.RedisCacheManager;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.ResultActions;
 import org.springframework.transaction.annotation.Transactional;
 
 import static org.assertj.core.api.Assertions.*;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -54,6 +54,10 @@ class ProductControllerTest {
     @Qualifier("redisTemplate")
     @Autowired
     private RedisTemplate redisTemplate;
+    @Autowired
+    private RedisCacheManager cacheManager;
+    @Autowired
+    private ProductService productService;
 
     @BeforeEach
     void setUp() {
@@ -99,7 +103,7 @@ class ProductControllerTest {
         long productId = products.get(0).getId();
         String cacheKey = "product:" + productId;
 
-        ResultActions resultActions = mockMvc.perform(get("/api/products/{productId}", productId)
+        mockMvc.perform(get("/api/products/{productId}", productId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .header("Authorization", "Bearer " + token))
             .andExpect(status().isOk())
@@ -107,6 +111,8 @@ class ProductControllerTest {
             .andExpect(jsonPath("$.data.name").value(products.get(0).getName()))
             .andExpect(jsonPath("$.data.price").value(products.get(0).getPrice()))
             .andExpect(jsonPath("$.data.description").value(products.get(0).getDescription()));
+
+
 
 
         // redis에 저장되어 있는가

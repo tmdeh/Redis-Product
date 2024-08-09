@@ -3,6 +3,7 @@ package com.tmdeh.redisproduct.model.entity;
 import com.tmdeh.redisproduct.model.dto.reqeust.CreateProductRequest;
 import com.tmdeh.redisproduct.model.dto.response.ProductResponse;
 import jakarta.persistence.*;
+import java.io.Serializable;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,7 +11,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @Entity
 @NoArgsConstructor
-public class Product extends TimeStamp {
+public class Product extends TimeStamp implements Serializable  {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

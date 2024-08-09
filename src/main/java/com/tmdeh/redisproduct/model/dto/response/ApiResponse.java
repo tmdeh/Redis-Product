@@ -3,18 +3,22 @@ package com.tmdeh.redisproduct.model.dto.response;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.tmdeh.redisproduct.exception.CustomException;
 import com.tmdeh.redisproduct.exception.code.ErrorCode;
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import org.springframework.http.HttpStatus;
 
 @Getter
 @Builder
 @JsonInclude(JsonInclude.Include.NON_NULL)
+@NoArgsConstructor
+@AllArgsConstructor
 public class ApiResponse <T> {
 
-    private final Integer status;
-    private final String message;
-    private final T data;
+    private Integer status;
+    private String message;
+    private T data;
 
     public static <T> ApiResponse<T> of(HttpStatus status, String message, T data) {
         return ApiResponse.<T>builder()
