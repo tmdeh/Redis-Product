@@ -22,6 +22,7 @@ public enum ErrorCode {
 
     NOT_FOUND_PRODUCT(HttpStatus.NOT_FOUND, "존재하지 않는 상품입니다."),
 
+    OUT_OF_STOCK(HttpStatus.BAD_REQUEST, "재고가 부족합니다.")
     ;
     private final HttpStatus code;
     private final String message;
