@@ -1,6 +1,7 @@
 package com.tmdeh.redisproduct.controller;
 
 import com.tmdeh.redisproduct.model.dto.reqeust.CartRequest;
+import com.tmdeh.redisproduct.model.dto.response.ApiResponse;
 import com.tmdeh.redisproduct.model.dto.response.CartResponse;
 import com.tmdeh.redisproduct.model.entity.Member;
 import com.tmdeh.redisproduct.service.CartService;
@@ -20,13 +21,14 @@ public class CartController {
     private final CartService cartService;
 
     @PostMapping
-    public ResponseEntity<CartResponse> insertCart(
+    public ResponseEntity<ApiResponse<CartResponse>> insertCart(
         @RequestBody
         CartRequest request,
         @AuthenticationPrincipal
-        Member member) {
-        cartService.insertCart(request, member);
-        return null;
+        Member member
+    ) {
+        ApiResponse<CartResponse> response = cartService.insertCart(request, member);
+        return ResponseEntity.status(response.getStatus()).body(response);
     }
 
 }
