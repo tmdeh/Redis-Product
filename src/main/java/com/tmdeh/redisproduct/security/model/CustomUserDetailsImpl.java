@@ -2,18 +2,17 @@ package com.tmdeh.redisproduct.security.model;
 
 import com.tmdeh.redisproduct.model.entity.Member;
 import com.tmdeh.redisproduct.security.service.CustomUserDetails;
+import java.util.Collection;
+import java.util.List;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
-
-import java.util.Collection;
-import java.util.List;
 
 @Getter
 @RequiredArgsConstructor
 public class CustomUserDetailsImpl implements CustomUserDetails {
 
-    private final Member user;
+    private final Member member;
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -22,12 +21,12 @@ public class CustomUserDetailsImpl implements CustomUserDetails {
 
     @Override
     public String getPassword() {
-        return user.getPassword();
+        return member.getPassword();
     }
 
     @Override
     public String getUsername() {
-        return this.user.getEmail();
+        return this.member.getEmail();
     }
 
     @Override

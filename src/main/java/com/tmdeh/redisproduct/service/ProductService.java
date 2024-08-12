@@ -23,7 +23,7 @@ public class ProductService {
 
     @Transactional
     public ApiResponse<ProductResponse> createProduct(CreateProductRequest request) {
-        Product product = productRepository.save(Product.of(request));;
+        Product product = productRepository.save(Product.of(request));
         return ApiResponse.of(HttpStatus.CREATED, HttpStatus.CREATED.name(), Product.from(product));
     }
 

@@ -6,12 +6,18 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.ManyToOne;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import org.springframework.data.redis.core.RedisHash;
 
 @Getter
 @Entity
+@Builder
+@RedisHash("cart")
 @NoArgsConstructor
+@AllArgsConstructor
 public class Cart extends TimeStamp{
 
     @Id
@@ -25,4 +31,14 @@ public class Cart extends TimeStamp{
     private Product product;
 
     private Integer quantity; // 개수
+
+
+//    public static Cart of(CartRequest request, Member member, Product product) {
+//        return Cart.builder()
+//            .member(member)
+//            .product(product)
+//            .quantity(request.getQuantity())
+//            .build();
+//    }
+
 }

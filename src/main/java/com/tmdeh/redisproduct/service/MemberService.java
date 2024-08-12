@@ -49,7 +49,7 @@ public class MemberService {
         CustomUserDetails userDetails = authenticate(request.getEmail(), request.getPassword());
 
         String refreshToken = jwtTokenProvider.generateRefreshToken();
-        String accessToken = jwtTokenProvider.generateAccessToken(userDetails.getUser().getId());
+        String accessToken = jwtTokenProvider.generateAccessToken(userDetails.getMember().getId());
 
         return ApiResponse.success(new LoginResponse(accessToken, refreshToken));
     }
