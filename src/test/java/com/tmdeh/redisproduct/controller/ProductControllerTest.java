@@ -1,6 +1,11 @@
 package com.tmdeh.redisproduct.controller;
 
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.tmdeh.redisproduct.config.TestSecurityConfig;
@@ -11,6 +16,8 @@ import com.tmdeh.redisproduct.service.ProductService;
 import com.tmdeh.redisproduct.util.JwtTokenProvider;
 import java.util.ArrayList;
 import java.util.List;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,12 +31,7 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
-
-import static org.assertj.core.api.Assertions.*;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
-import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+import redis.embedded.RedisServer;
 
 @SpringBootTest
 @Transactional
@@ -51,6 +53,7 @@ class ProductControllerTest {
     private ProductRepository productRepository;
 
     private List<Product> products;
+
     @Qualifier("redisTemplate")
     @Autowired
     private RedisTemplate redisTemplate;
@@ -58,6 +61,21 @@ class ProductControllerTest {
     private RedisCacheManager cacheManager;
     @Autowired
     private ProductService productService;
+
+    private static RedisServer redisServer;
+
+    @BeforeAll
+    public static void startRedis() {
+        redisServer = new RedisServer(6379);
+        redisServer.start();
+    }
+
+    @AfterAll
+    public static void stopRedis() {
+        if (redisServer != null) {
+            redisServer.stop();
+        }
+    }
 
     @BeforeEach
     void setUp() {
