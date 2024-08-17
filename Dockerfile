@@ -11,4 +11,4 @@ COPY build/libs/RedisProduct-0.0.1-SNAPSHOT.jar /app/redis-product.jar
 EXPOSE 8080
 
 # Command to run the application
-ENTRYPOINT ["java", "-jar", "redis-product.jar"]
+ENTRYPOINT ["java", "-jar", "redis-product.jar", "--spring.profiles.active=prod"]
