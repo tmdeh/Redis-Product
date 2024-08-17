@@ -13,6 +13,14 @@ java {
     }
 }
 
+bootJar {
+    manifest {
+        attributes(
+                'Spring-Profile': 'prod'
+        )
+    }
+}
+
 configurations {
     compileOnly {
         extendsFrom annotationProcessor
@@ -48,4 +56,9 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+bootRun {
+    String activeProfile = System.properties['spring.profiles.active']
+    systemProperty "spring.profiles.active", activeProfile
 }
