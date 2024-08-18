@@ -31,7 +31,7 @@ public class MemberController {
 
     @GetMapping("/profile")
     public ResponseEntity<?> getProfile() {
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("hello");
     }
 
 }
